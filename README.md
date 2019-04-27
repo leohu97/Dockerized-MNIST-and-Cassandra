@@ -1,6 +1,8 @@
 # Dockerized MNIST & Cassandra
 In this project, a journaling application that can recognize a user-uploaded image of the handwritten digit was constructed by two docker Containers: an Application Docker Container and a Database Docker Container. <br/>
+
 While the user submits a Curl command to the designated address, the Flask Router first makes a safety check to both the command and the image file it contains. The Router then saves the image and requests the prediction from the MNIST TensorFlow model. After the result returns, the Router forwards the result to the user and submits all four data to the Cassandra Database Container through the Docker Network Bridge.<br/>
+
 The Cassandra Database records the user IP address, the service request time, the predicted result, and the path to the uploaded image. Finally, the application currently uses a MNIST model trained by 10000 steps and provides the prediction service with an accuracy of 0.92.  
 
 ## Network Preparation
@@ -34,8 +36,14 @@ docker run --name [APP-Name] --net=[bridge-name] --net-alias=[APP-Name] -d -p 80
 ```
 
 ## Submit Prediction
-Using following curl command to submit prediction to Application Docker Container.
+Using following curl command to submit prediction to Application Docker Container.<br/>
 The size of testing image should be exactly 28pix * 28pix.
 ```
-curl -X POST -F image=@[path_to_the_image] 'http://localhost:8000/mnist'
+curl -X POST -F image=@[path_to_the_image] '[url_to_the_service]'
+
 ```
+
+## Local Testing
+By attaching to the Application Docker Container, a testing file "1.png" is provide, which could be used by changing [path_to_the_image] to "1.png". <br/>
+The default URL to the service is "http://localhost:5000/mnist". <br/>
+If testing out of the Docker Container, the port should be changed to 8000. (Defined in Application Container Preparation)
